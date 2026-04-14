@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 int left10 = 10;
 int right11 = 11;
 
@@ -19,6 +21,14 @@ void roue_l() {
   count_l++;
 }
 
+/* ---------------- MOTOR ---------------- */
+
+void pulseServo(int servoPin, int pulseLg) {
+  digitalWrite(servoPin, HIGH);
+  delayMicroseconds(pulseLg);
+  digitalWrite(servoPin, LOW);
+}
+
 /* ---------------- SETUP ---------------- */
 
 void setup() {
@@ -35,21 +45,8 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(3), roue_l, CHANGE);
 
   Serial.begin(9600);
-}
 
-/* ---------------- LOOP ---------------- */
-
-void loop() {
-  roulerPrecis(30);
-  delay(2000);
-}
-
-/* ---------------- MOTOR ---------------- */
-
-void pulseServo(int servoPin, int pulseLg) {
-  digitalWrite(servoPin, HIGH);
-  delayMicroseconds(pulseLg);
-  digitalWrite(servoPin, LOW);
+  randomSeed(analogRead(A0));
 }
 
 /* ---------------- SENSOR CHECK ---------------- */
@@ -69,7 +66,41 @@ void stopRobot() {
   digitalWrite(right11, LOW);
 }
 
-/* ---------------- MOVE ---------------- */
+/* ---------------- ESCAPE BEHAVIOR ---------------- */
+
+void reculerPetit() {
+  for (int i = 0; i < 40; i++) {
+    pulseServo(left10, 1300);
+    pulseServo(right11, 1700);
+    delay(15);
+  }
+}
+
+void tournerRandom(int direction) {
+  int angle = random(30, 120);
+
+  int varL, varR;
+
+  if (direction == 1) {
+    // turn LEFT
+    varL = 1300;
+    varR = 1300;
+  } else {
+    // turn RIGHT
+    varL = 1700;
+    varR = 1700;
+  }
+
+  int steps = angle * 2;
+
+  for (int i = 0; i < steps; i++) {
+    pulseServo(left10, varL);
+    pulseServo(right11, varR);
+    delay(15);
+  }
+}
+
+/* ---------------- MAIN MOVE ---------------- */
 
 void roulerPrecis(float distanceCm) {
   count_r = 0;
@@ -79,20 +110,26 @@ void roulerPrecis(float distanceCm) {
 
   while (count_l < cible && count_r < cible) {
 
-    if (wallLeft() || wallRight()) {
+    /* SENSOR CHECK */
+    if (wallLeft()) {
       stopRobot();
+      Serial.println("LEFT WALL");
 
-      if (wallLeft()) {
-        Serial.println("LEFT WALL DETECTED");
-      }
-
-      if (wallRight()) {
-        Serial.println("RIGHT WALL DETECTED");
-      }
-
+      reculerPetit();
+      tournerRandom(1); // turn RIGHT
       return;
     }
 
+    if (wallRight()) {
+      stopRobot();
+      Serial.println("RIGHT WALL");
+
+      reculerPetit();
+      tournerRandom(0); // turn LEFT
+      return;
+    }
+
+    /* MOTOR CONTROL */
     if (count_l < cible)
       pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
 
@@ -101,4 +138,11 @@ void roulerPrecis(float distanceCm) {
 
     delay(20);
   }
+}
+
+/* ---------------- LOOP ---------------- */
+
+void loop() {
+  roulerPrecis(30);
+  delay(2000);
 }
