@@ -1,36 +1,31 @@
-
 int left10 = 10;
 int right11 = 11;
 
-volatile int count_r = 0; 
-volatile int count_l = 0; 
+volatile int count_r = 0;
+volatile int count_l = 0;
 
-const float distParImpulsion = 0.325; 
+const float distParImpulsion = 0.325;
 
-void roue_r()
-{
+void roue_r() {
   count_r++;
 }
 
-void roue_l()
-{
+void roue_l() {
   count_l++;
 }
 
-void sensor_r()
-{
+void sensor_r() {
   Serial.print("RRRRRR");
 }
 
-void sensor_l()
-{
+void sensor_l() {
   Serial.print("LLLLLL");
 }
 
-void setup()
-{
-  pinMode( left10, OUTPUT) ;
-  pinMode( right11, OUTPUT) ;
+void setup() {
+  pinMode(left10, OUTPUT);
+  pinMode(right11, OUTPUT);
+
   Serial.begin(9600);
 
   attachInterrupt(digitalPinToInterrupt(2), roue_r, CHANGE);
@@ -39,98 +34,89 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(6), sensor_r, CHANGE);
   attachInterrupt(digitalPinToInterrupt(5), sensor_l, CHANGE);
 }
+
 void loop() {
-
   roulerPrecis(30);
-  //tournerSurLuiPrecis(180); 
-  //tournerSurRouePrecis(360, left10); 
-
   delay(5000);
 }
 
-void pulseServo( int servoPin, int pulseLg)
-{
-  digitalWrite( servoPin, HIGH);
-  delayMicroseconds( pulseLg);
-  digitalWrite( servoPin, LOW);
-} 
+void pulseServo(int servoPin, int pulseLg) {
+  digitalWrite(servoPin, HIGH);
+  delayMicroseconds(pulseLg);
+  digitalWrite(servoPin, LOW);
+}
 
-
-
-void roulerPrecis(float distanceCm) 
-{
+void roulerPrecis(float distanceCm) {
   count_r = 0;
-  count_l = 0; 
+  count_l = 0;
 
-  int cible = abs(distanceCm) / distParImpulsion; 
+  int cible = abs(distanceCm) / distParImpulsion;
 
-  while (count_l < cible && count_r < cible) 
-  {
+  while (count_l < cible && count_r < cible) {
     if (count_l < cible)
-      pulseServo(left10, distanceCm > 0 ? 1700 : 1300); 
+      pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
+
     if (count_r < cible)
-      pulseServo(right11, distanceCm > 0 ? 1300 : 1700); 
+      pulseServo(right11, (distanceCm > 0) ? 1300 : 1700);
+
     delay(20);
   }
-} 
+}
 
-void tournerSurLuiPrecis(int angle) 
-{
-  count_r = 0; 
-  count_l = 0; 
+void tournerSurLuiPrecis(int angle) {
+  count_r = 0;
+  count_l = 0;
 
-  int cible = (abs(angle)33.24) / (360 distParImpulsion); 
-
+  int cible = (abs(angle) * 33.24) / (360 * distParImpulsion);
 
   int varL = (angle > 0) ? 1700 : 1300;
-  int varR = (angle > 0) ? 1700 : 1300; 
+  int varR = (angle > 0) ? 1700 : 1300;
 
-  while (count_l < cible && count_r < cible)
-  {
-    if (count_l < cible) pulseServo(left10, varL); 
-    if (count_r < cible) pulseServo(right11, varR); 
+  while (count_l < cible && count_r < cible) {
+    if (count_l < cible)
+      pulseServo(left10, varL);
 
-    delay(20); 
+    if (count_r < cible)
+      pulseServo(right11, varR);
+
+    delay(20);
   }
-} 
+}
 
-void tournerSurRouePrecis(int angle, int roue) 
-{
+void tournerSurRouePrecis(int angle, int roue) {
   count_r = 0;
-  count_l = 0; 
+  count_l = 0;
 
-  int cible = (abs(angle) 66.48) / (360 distParImpulsion); 
+  int cible = (abs(angle) * 66.48) / (360 * distParImpulsion);
 
-  while ((roue == left10 && count_r < cible)  (roue == right11 && count_l < cible)) 
-  {
-    if (roue == left10) 
-      pulseServo(right11, (angle > 0) ? 1300 : 1700); 
-    else if (roue == right11) 
-      pulseServo(left10, (angle > 0) ? 1700 : 1300); 
-    delay(20); 
+  while ((roue == left10 && count_r < cible) ||
+         (roue == right11 && count_l < cible)) {
+
+    if (roue == left10)
+      pulseServo(right11, (angle > 0) ? 1300 : 1700);
+    else if (roue == right11)
+      pulseServo(left10, (angle > 0) ? 1700 : 1300);
+
+    delay(20);
   }
-} 
+}
 
-
-
-void rouler(int len)
-{
+void rouler(int len) {
   int compt = 0;
-  int n = abs(len) 10/3.25;
-  int roue1, roue2;
+  int n = abs(len) * 10 / 3.25;
 
-  if (len > 0)
-  {
+  int roue1;
+  int roue2;
+
+  if (len > 0) {
     roue1 = left10;
     roue2 = right11;
-  }
-  else if (len < 0)
-  {
+  } else {
     roue1 = right11;
     roue2 = left10;
   }
-  while (compt < n)
-  {
+
+  while (compt < n) {
     pulseServo(roue1, 1700);
     pulseServo(roue2, 1300);
     compt++;
@@ -138,34 +124,21 @@ void rouler(int len)
   }
 }
 
-void tournerSurRoue(int angle,int roue) {
-
-  if(angle > 0)
-  {
+void tournerSurRoue(int angle, int roue) {
+  if (angle > 0) {
     pulseServo(roue, 1300);
-  }
-  else if(angle < 0)
-  {
+  } else if (angle < 0) {
     pulseServo(roue, 1700);
   }
-
 }
 
-void tournerSurLui(int angle)
-{
+void tournerSurLui(int angle) {
   int compt = 0;
-  int n = (abs(angle)332.2) / (360 * 3.25) * 1.5;
-  int roue1, roue2;
-  int var;
+  int n = (abs(angle) * 332.2) / (360 * 3.25) * 1.5;
 
-  if (angle > 0)
-    var = 1300;
-  else if (angle < 0)
-    var = 1700;
-  Serial.print(n);
-  Serial.print("");
-  while (compt < n)
-  {
+  int var = (angle > 0) ? 1300 : 1700;
+
+  while (compt < n) {
     pulseServo(left10, var);
     pulseServo(right11, var);
     compt++;
