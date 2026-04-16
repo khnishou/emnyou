@@ -58,16 +58,16 @@ void roulerPrecis(float distanceCm)
 
   int cible = abs(distanceCm) / distParImpulsion;
 
-  while (count_l < cible && count_r < cible) {
-    if (distanceCm > 0)
-      count += wallCheck();
-    if (count > 4)
+  while (count_l < cible && count_r < cible)
+  {
+    if (count > 3)
     {
       roulerPrecis(-20);
       tournerSurLuiPrecis(180);
       count = 0;
     }
-
+    if (distanceCm > 0)
+      count += wallCheck();
     if (count_l < cible)
       pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
 
@@ -111,31 +111,19 @@ bool wallRight()
 
 int wallCheck()
 {
-  if (!wallLeft() || !wallRight()) {
-  delay(1000);
-  }
-  if (!wallLeft() && !wallRight()) {
-  Serial.println("FFFFFFFFF");
-
-    roulerPrecis(-10);
-    tournerSurLuiPrecis(180);
-    return 1;
-  }
-
-  int angle = random(-180, 180);
+  int angle = random(30, 120);
   if (!wallLeft()) {
-  Serial.println("LLLLLLLL");
-
+    Serial.println("LLLLLLLL");
     roulerPrecis(-5);
     tournerSurLuiPrecis(angle);
     return 1;
   }
 
   if (!wallRight()) {
-  Serial.println("RRRRRRR");
-
+    Serial.println("RRRRRRR");
     roulerPrecis(-5);
     tournerSurLuiPrecis(-angle);
     return 1;
   }
+  return 0;
 }
