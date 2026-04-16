@@ -62,8 +62,7 @@ void roulerPrecis(float distanceCm)
   {
     if (count > 3)
     {
-      roulerPrecis(-20);
-      tournerSurLuiPrecis(180);
+      demiTour(180, 1, 20)
       count = 0;
     }
     if (distanceCm > 0)
@@ -109,20 +108,23 @@ bool wallRight()
   return digitalRead(sensorRightPin) == HIGH;
 }
 
+void demiTour(int angle, int direction, int back)
+{
+  roulerPrecis(-(back));
+  tournerSurLuiPrecis(angle * direction);
+}
+
 int wallCheck()
 {
   int angle = random(30, 120);
   if (!wallLeft()) {
     Serial.println("LLLLLLLL");
-    roulerPrecis(-5);
-    tournerSurLuiPrecis(angle);
+    demiTour(angle, 1, 5);
     return 1;
   }
-
   if (!wallRight()) {
     Serial.println("RRRRRRR");
-    roulerPrecis(-5);
-    tournerSurLuiPrecis(-angle);
+    demiTour(angle, -1, 5);
     return 1;
   }
   return 0;
