@@ -37,6 +37,7 @@ void setup()
 
 void loop()
 {
+
   roulerPrecis(30);
   delay(500);
 }
@@ -50,13 +51,14 @@ void pulseServo(int servoPin, int pulseLg)
 
 void roulerPrecis(float distanceCm)
 {
+
   count_r = 0;
   count_l = 0;
 
   int cible = abs(distanceCm) / distParImpulsion;
 
   while (count_l < cible && count_r < cible) {
-    if (distanceCm < 0)
+    if (distanceCm > 0)
       wallCheck();
     if (count_l < cible)
       pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
@@ -89,55 +91,37 @@ void tournerSurLuiPrecis(int angle)
   }
 }
 
-void tournerRandom(int direction)
-{
-  int angle = random(30, 120);
-
-  int varL, varR;
-
-  if (direction == 1) {
-    // turn LEFT
-    varL = 1300;
-    varR = 1300;
-  } else {
-    // turn RIGHT
-    varL = 1700;
-    varR = 1700;
-  }
-
-  int steps = angle * 2;
-
-  for (int i = 0; i < steps; i++) {
-    pulseServo(left10, varL);
-    pulseServo(right11, varR);
-    delay(15);
-  }
-}
-
 bool wallLeft()
 {
   Serial.println("LLLLLLLL");
-  return digitalRead(sensorLeftPin) == LOW;
+  return digitalRead(sensorLeftPin) == HIGH;
 }
 
 bool wallRight()
 {
   Serial.println("RRRRRRRR");
-  return digitalRead(sensorRightPin) == LOW;
+  return digitalRead(sensorRightPin) == HIGH;
 }
 
 void wallCheck()
 {
+
+  if (!wallLeft() && !wallRight()) {
+    roulerPrecis(-10);
+    tournerSurLuiPrecis(180);
+    return;
+  }
+
   int angle = random(30, 120);
-  if (wallLeft()) {
-    roulerPrecis(-5);
+  if (!wallLeft()) {
+    roulerPrecis(-10);
     tournerSurLuiPrecis(angle);
     return;
   }
 
-  if (wallRight()) {
-    roulerPrecis(-5);
-    tournerSurLuiPrecis(angle);
+  if (!wallRight()) {
+    roulerPrecis(-10);
+    tournerSurLuiPrecis(-angle);
     return;
   }
 }
