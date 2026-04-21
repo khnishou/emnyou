@@ -1,0 +1,36 @@
+void tournerMoteur(float d)
+{
+  // 1. La main est perdue -> On s'arrête et on cherche
+  if (d > 40 || d == 0) 
+  {
+    roulerPrecis(0); 
+    chercherMain();  
+  }
+  // 2. La main est trouvée, mais la tête est tournée !
+  else if (posTete > 1600 || posTete < 1400) 
+  {
+    // On calcule l'angle de la tête par rapport au centre
+    int angle = (posTete - 1500) * 90 / 500; 
+    
+    // On utilise TA fonction pour tourner le corps d'un coup sec !
+    tournerSurLuiPrecis(angle); 
+    
+    // Le corps s'est aligné sur la main, on peut recentrer la tête
+    posTete = 1500;
+    pulseServo(headPin, posTete);
+  }
+  // 3. Le robot est bien en face (tête centrée) -> Marche avant/arrière
+  else 
+  {
+    posTete = 1500;
+    pulseServo(headPin, 1500); // On s'assure que la tête est bien droite
+
+    if (d > 17) {
+      roulerPrecis(1);  // Avance
+    } else if (d < 13) {
+      roulerPrecis(-1); // Recule
+    } else {
+      roulerPrecis(0);  // Stop
+    }
+  }
+}
