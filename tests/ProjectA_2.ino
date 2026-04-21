@@ -38,15 +38,15 @@ void setup()
 void loop()
 {
   roulerVerif_isSpace(1);
-  if (roulerVerif_dist(17))
-  {
-    // creneau
-  }
+  delay(1000);
+  roulerVerif_isNSpace(1);
+  // roulerVerif_dist(30);
+
 }
 
 int isSpace()
 {
-  return (distanceCm() > 10);
+  return (distanceCm() > 15);
 }
 
 void pulseServo(int servoPin, int pulseLg)
@@ -66,31 +66,48 @@ int roulerVerif_dist(float distanceCm)
   while (count_l < cible && count_r < cible)
   {
     if (!isSpace())
+    {
       return (0);
+    }
     if (count_l < cible)
       pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
-
     if (count_r < cible)
       pulseServo(right11, (distanceCm > 0) ? 1300 : 1700);
-
     delay(20);
   }
   return 1;
+}
+
+void roulerVerif_isNSpace(int direc)
+{
+  count_r = 0;
+  count_l = 0;
+  while (1)
+  {
+    if (!isSpace())
+      break ;
+    if (count_l <= count_r)
+      pulseServo(left10, (direc > 0) ? 1700 : 1300);
+
+    if (count_r <= count_l)
+      pulseServo(right11, (direc > 0) ? 1300 : 1700);
+
+    delay(20);
+  }
 }
 
 void roulerVerif_isSpace(int direc)
 {
   count_r = 0;
   count_l = 0;
-
   while (1)
   {
     if (isSpace())
       break ;
-    if (count_l < count_r)
+    if (count_l <= count_r)
       pulseServo(left10, (direc > 0) ? 1700 : 1300);
 
-    if (count_r < count_l)
+    if (count_r <= count_l)
       pulseServo(right11, (direc > 0) ? 1300 : 1700);
 
     delay(20);
@@ -137,13 +154,3 @@ float distanceCm()
 
   return microsecondsToCentimeters(duration); 
 } 
-
-void tournerMoteur(float d)
-{
-  if (d > 17)
-    roulerPrecis(1);
-  else if (d < 13)
-    roulerPrecis(-1);
-  else
-    roulerPrecis(0);
-}
