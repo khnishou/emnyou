@@ -23,12 +23,9 @@ void roue_l()
 
 void setup()
 {
-  pinMode(servoPin, OUTPUT);
+  pinMode(pingPin, OUTPUT);
   pinMode(left10, OUTPUT);
   pinMode(right11, OUTPUT);
-
-  pinMode(sensorLeftPin, INPUT_PULLUP);
-  pinMode(sensorRightPin, INPUT_PULLUP);
 
   Serial.begin(9600);
 
@@ -40,9 +37,7 @@ void setup()
 
 void loop()
 {
-
-  roulerPrecis(100);
-  delay(500);
+  tournerMoteur(distanceCm());
 }
 
 void pulseServo(int servoPin, int pulseLg)
@@ -52,47 +47,40 @@ void pulseServo(int servoPin, int pulseLg)
   digitalWrite(servoPin, LOW);
 }
 
-void roulerPrecis(float distanceCm)
+void roulerPrecis(float direc)
 {
-
-  count_r = 0;
-  count_l = 0;
-  int count = 0;
-
-  int cible = abs(distanceCm) / distParImpulsion;
-
-  while (count_l < cible && count_r < cible)
+  if (!direc)
   {
-    if (count_l < cible)
-      pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
-
-    if (count_r < cible)
-      pulseServo(right11, (distanceCm > 0) ? 1300 : 1700);
-
+    pulseServo(left10, 1500);
+    pulseServo(right11, 1500);
     delay(20);
+    return ;
   }
+  pulseServo(left10, (direc > 0) ? 1700 : 1300);
+  pulseServo(right11, (direc > 0) ? 1300 : 1700);
+  delay(20);
 }
 
-void tournerSurLuiPrecis(int angle)
-{
-  count_r = 0;
-  count_l = 0;
+// void tournerSurLuiPrecis(int angle)
+// {
+//   count_r = 0;
+//   count_l = 0;
 
-  int cible = (abs(angle) * 33.24) / (360 * distParImpulsion);
+//   int cible = (abs(angle) * 33.24) / (360 * distParImpulsion);
 
-  int varL = (angle > 0) ? 1700 : 1300;
-  int varR = (angle > 0) ? 1700 : 1300;
+//   int varL = (angle > 0) ? 1700 : 1300;
+//   int varR = (angle > 0) ? 1700 : 1300;
 
-  while (count_l < cible && count_r < cible) {
-    if (count_l < cible)
-      pulseServo(left10, varL);
+//   while (count_l < cible && count_r < cible) {
+//     if (count_l < cible)
+//       pulseServo(left10, varL);
 
-    if (count_r < cible)
-      pulseServo(right11, varR);
+//     if (count_r < cible)
+//       pulseServo(right11, varR);
 
-    delay(20);
-  }
-}
+//     delay(20);
+//   }
+// }
 
 float microsecondsToCentimeters(float microseconds) {
   return microseconds / 58;
@@ -110,17 +98,16 @@ float distanceCm()
   float duration = pulseIn(pingPin, HIGH);
   float t = duration /29.0/2 ;
   float d = v*t ;
-  cm = microsecondsToCentimeters(duration);
 
-  return cm; 
+  return microsecondsToCentimeters(duration); 
 } 
 
 void tournerMoteur(float d)
 {
-  if (d > 32)
-    roulerPrecis(5)
-  else if (d < 28)
-    roulerPrecis(-5)
+  if (d > 17)
+    roulerPrecis(1);
+  else if (d < 13)
+    roulerPrecis(-1);
   else
-    roulerPrecis(0)
+    roulerPrecis(0);
 }
