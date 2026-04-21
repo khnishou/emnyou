@@ -66,7 +66,7 @@ void roulerPrecis(float distanceCm)
       count = 0;
     }
     if (distanceCm > 0)
-      count += wallCheck();
+      count = wallCheck(count);
     if (count_l < cible)
       pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
 
@@ -114,18 +114,32 @@ void demiTour(int angle, int direction, int back)
   tournerSurLuiPrecis(angle * direction);
 }
 
-int wallCheck()
+int wallCheck(int count)
 {
-  int angle = random(30, 120);
-  if (!wallLeft()) {
-    Serial.println("LLLLLLLL");
-    demiTour(angle, 1, 5);
-    return 1;
+  int angle;
+
+  if (count > 3)
+  {
+    angle = random(100, 180);
+    count = 0;
   }
-  if (!wallRight()) {
-    Serial.println("RRRRRRR");
-    demiTour(angle, -1, 5);
-    return 1;
+  else
+    angle = random(30, 80);
+  if (!wallLeft() || !wallRight())
+  {
+    // add time delay
+    if (!wallLeft() && !wallRight())
+      Serial.println("FFFFFFFF");
+    if (!wallLeft()) {
+      Serial.println("LLLLLLLL");
+      demiTour(angle, 1, 5);
+      return (count + 1);
+    }
+    if (!wallRight()) {
+      Serial.println("RRRRRRR");
+      demiTour(angle, -1, 5);
+      return (count + 1);
+    }
   }
-  return 0;
+  return (count);
 }
