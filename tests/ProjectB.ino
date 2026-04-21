@@ -127,17 +127,17 @@ int wallCheck(int count)
     delay(500);
     if (!wallLeft() && !wallRight())
     {
-      Serial.println("FFFFFFFF");
+      Serial.println("obstacle détecté devant");
       demiTour(225, 1, 10);
       return (count);
     }
     if (!wallLeft()) {
-      Serial.println("LLLLLLLL");
+      Serial.println("obstacle détecté  a gauche");
       demiTour(angle, 1, 5);
       return (count + 1);
     }
     if (!wallRight()) {
-      Serial.println("RRRRRRR");
+      Serial.println("obstacle détecté  a droite");
       demiTour(angle, -1, 5);
       return (count + 1);
     }
