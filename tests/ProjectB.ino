@@ -60,11 +60,6 @@ void roulerPrecis(float distanceCm)
 
   while (count_l < cible && count_r < cible)
   {
-    if (count > 3)
-    {
-      demiTour(180, 1, 20)
-      count = 0;
-    }
     if (distanceCm > 0)
       count = wallCheck(count);
     if (count_l < cible)
@@ -117,19 +112,25 @@ void demiTour(int angle, int direction, int back)
 int wallCheck(int count)
 {
   int angle;
+  
+  
 
-  if (count > 3)
-  {
-    angle = random(100, 180);
-    count = 0;
-  }
-  else
-    angle = random(30, 80);
   if (!wallLeft() || !wallRight())
   {
-    // add time delay
+    if (count > 3)
+    {
+      angle = random(100, 180);
+      count = 0;
+    }
+    else
+      angle = random(30, 80);
+    delay(500);
     if (!wallLeft() && !wallRight())
+    {
       Serial.println("FFFFFFFF");
+      demiTour(225, 1, 10);
+      return (count);
+    }
     if (!wallLeft()) {
       Serial.println("LLLLLLLL");
       demiTour(angle, 1, 5);
