@@ -11,7 +11,7 @@ volatile int count_l = 0;
 const float distParImpulsion = 0.325;
 
 // ==========================================
-// TES FONCTIONS D'INTERRUPTION
+//  FONCTIONS D'INTERRUPTION
 // ==========================================
 void roue_r() { count_r++; }
 void roue_l() { count_l++; }
@@ -35,7 +35,7 @@ void setup()
 }
 
 // ==========================================
-// TES FONCTIONS DE MOUVEMENT
+// FONCTIONS DE MOUVEMENT
 // ==========================================
 void pulseServo(int servoPin, int pulseLg)
 {
@@ -78,7 +78,7 @@ void tournerSurLuiPrecis(int angle)
 }
 
 // ==========================================
-// TA FONCTION CAPTEUR ET TÊTE
+//  FONCTION CAPTEUR ET TÊTE
 // ==========================================
 float distanceCm()
 {
@@ -120,7 +120,7 @@ void loop()
     roulerPrecis(0);
     chercherMain();
   }
-  // 2. SI LA MAIN EST SUR LE CÔTÉ : On utilise TA fonction precise pour s'aligner
+  // 2. SI LA MAIN EST SUR LE CÔTÉ : On utilise lA fonction precise pour s'aligner
   else if (posTete > 1650 || posTete < 1350) 
   {
     int angle = (posTete - 1500) * 90 / 500; 
@@ -132,7 +132,7 @@ void loop()
     pulseServo(headPin, posTete);
     delay(100); // Laisse le capteur se stabiliser
   }
-  // 3. SI LA MAIN EST BIEN EN FACE : On ajuste la distance avec TA fonction
+  // 3. SI LA MAIN EST BIEN EN FACE : On ajuste la distance avec lA fonction
   else 
   {
     posTete = 1500;
