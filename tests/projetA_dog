@@ -108,7 +108,9 @@ void chercherMain()
 
   if(posTete >= 2000 || posTete <= 1000)
     sensTete = -sensTete;
+    
   pulseServo(headPin, posTete);
+  delay(15);
 }
 
 // void dogSim(float d)
@@ -170,14 +172,18 @@ void dogSim(float d)
       pulseServo(headPin, 1500);
       follow(d);
     }
-    else
+   else
     {
       angle = (posTete - 1500) * 90 / 500;
-      Serial.println(posTete);
-      Serial.println(angle);
-      delay(2000);
+      
+      // CORRECTION 3 : Suppression du coma de 2 secondes
+      delay(200); // Juste le temps de stabiliser l'Arduino
+      
       tournerSurLuiPrecis(angle);
+      
+      // On recentre la tête physiquement pour le prochain scan
       posTete = 1500;
+      pulseServo(headPin, 1500); 
     }
   }
 }
