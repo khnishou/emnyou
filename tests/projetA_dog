@@ -2,11 +2,9 @@ int left10 = 10;
 int right11 = 11;
 
 int pingPin = 7;
-// MODIFICATION 2 : Suppression de float v (plus besoin pour le nouveau calcul)
 
 int headPin = 12;
 int posTete = 1500;
-// MODIFICATION 1 : Vitesse de la tête réduite à 15 (au lieu de 50) pour laisser le temps au capteur de voir la main
 int sensTete = 15; 
 
 volatile int count_r = 0;
@@ -40,7 +38,7 @@ void setup()
 
 void loop()
 {
-  tournerMoteur(distanceCm());
+  dogSim(distanceCm());
 }
 
 void pulseServo(int servoPin, int pulseLg)
@@ -89,7 +87,6 @@ float microsecondsToCentimeters(float microseconds) {
   return microseconds / 58;
 }
 
-// MODIFICATION 2 : Code du capteur nettoyé pour être plus rapide
 float distanceCm()
 {
   pinMode(pingPin, OUTPUT);
@@ -108,49 +105,50 @@ float distanceCm()
 void chercherMain(){
   posTete = posTete + sensTete;
 
-  if(posTete >= 2000 || posTete <= 1000){
+  if(posTete >= 2000 || posTete <= 1000)
     sensTete = -sensTete;
-  }
   pulseServo(headPin, posTete);
 }
 
-void tournerMoteur(float d)
+void dogSim(float d)
 {
-  // 1. Si la main est perdue (plus de 35 cm ou 0)
   if (d > 35 || d == 0) 
   {
-    roulerPrecis(0); // On stoppe les roues
-    chercherMain();  // La tête balaie de gauche à droite
+    roulerPrecis(0);
+    chercherMain();
   }
-  // 2. Si la main est trouvée, mais que la tête est tournée sur le côté
-  else if (posTete > 1600 || posTete < 1400) 
+  else
   {
-    int angle = (posTete - 1500) * 90 / 500; // On calcule l'angle
+    if (posTete > 1600 || posTete < 1400)
+    {
+      int angle = (posTete - 1500) * 90 / 500;
+      tournerSurLuiPrecis(angle);
+      posTete = 1500;
     
-    tournerSurLuiPrecis(angle); // Le robot pivote sur lui-même
-    
-    posTete = 1500; // Mise à jour de la variable
-    
-    // MODIFICATION 3 : Boucle d'attente pour laisser la tête se recentrer mécaniquement
-    for(int i = 0; i < 15; i++) {
-      roulerPrecis(0);              // Maintient les roues à l'arrêt
-      pulseServo(headPin, posTete); // Envoie l'ordre de centrage à la tête
-      delay(20);                    // Respecte la fréquence du signal
+      int i = 0;
+      while (i < 15)
+      {
+        roulerPrecis(0);
+        pulseServo(headPin, posTete);
+        delay(20);
+        i++;
+      }
+    }
+    else
+    {
+      posTete = 1500;
+      pulseServo(headPin, 1500);
+      follow(d);
     }
   }
-  // 3. Le robot est bien en face (tête centrée)
-  else 
-  {
-    posTete = 1500;
-    pulseServo(headPin, 1500); // On maintient la tête droite
+}
 
-    // On gère l'approche et le recul
-    if (d > 17 && d < 35) {
-      roulerPrecis(1);  
-    } else if (d < 13) {
-      roulerPrecis(-1); 
-    } else {
-      roulerPrecis(0);  
-    }
-  }
+void follow(float d)
+{
+  if (d > 17 && d < 35)
+    roulerPrecis(1);  
+  else if (d < 13)
+    roulerPrecis(-1); 
+  else
+    roulerPrecis(0);  
 }
