@@ -1,60 +1,48 @@
 void tournerMoteur(float d)
 {
-  // 1. CAS : MAIN PERDUE OU TROP PROCHE (ERREUR CAPTEUR)
-  // On s'arrête et on balaie l'horizon avec la tête
-  if (d > 40 || d <= 2) 
+  if (d > 45 || d <= 2) 
   {
     roulerPrecis(0);
     chercherMain();
+    return;
   }
   
-  // 2. CAS : MAIN DÉTECTÉE SUR LES CÔTÉS
-  // Si la tête est tournée à plus de 150 µs du centre (1500)
-  else if (posTete > 1650 || posTete < 1350) 
+  if (posTete > 1600 || posTete < 1400) 
   {
-    roulerPrecis(0); // On stoppe les roues pour stabiliser la mesure
+    roulerPrecis(0);
     
-    // TON IDÉE : Petit délai pour laisser la mécanique du servo se stabiliser
-    // et éviter l'erreur de lecture au moment de l'inversion de rotation
-    delay(150); 
-    
-    // On confirme la présence de la main avec une deuxième lecture
+    // ÉTAPE 1 : On bloque la valeur actuelle tout de suite
+    int lectureBrute = posTete; 
+    delay(100); // Petit temps mort pour stabilisation mécanique
+
+    // ÉTAPE 2 : On confirme que la main est toujours là
     float d_conf = distanceCm();
-    
-    if (d_conf > 0 && d_conf < 45) 
+    if (d_conf > 0 && d_conf < 50) 
     {
-      // Calcul de l'angle réel (Conversion microsecondes -> degrés)
-      int angle = (posTete - 1500) * 90 / 500; 
+      // ÉTAPE 3 : Calcul précis
+      // Si 2000 = Gauche et 1000 = Droite, alors (pos - 1500) est correct.
+      // Si c'est l'inverse, il faut mettre : (1500 - lectureBrute)
+      int angleAxe = (lectureBrute - 1500) * 90 / 500; 
 
-      // Sécurité : on limite la rotation pour ne pas perdre la main de vue
-      if (angle > 60) angle = 60;
-      if (angle < -60) angle = -60;
+      Serial.print("Position Tete: "); Serial.print(lectureBrute);
+      Serial.print(" -> Angle calcule: "); Serial.println(angleAxe);
 
-      // On pivote le corps du robot
-      tournerSurLuiPrecis(angle);
+      tournerSurLuiPrecis(angleAxe);
       
-      // Après avoir pivoté, on remet la tête bien droite au centre
-      posTete = 1500;
-      pulseServo(headPin, posTete);
-      
-      // Pause pour laisser le capteur "digérer" la secousse du mouvement
-      delay(250); 
+      // ÉTAPE 4 : Reset immédiat pour éviter que la boucle loop() ne réutilise l'ancienne valeur
+      posTete = 1500; 
+      pulseServo(headPin, 1500);
+      delay(300);
     }
   }
-  
-  // 3. CAS : MAIN BIEN EN FACE (TÊTE CENTRÉE)
-  // On ajuste la distance pour suivre la main
   else 
   {
-    posTete = 1500; // On force la variable au centre
-    pulseServo(headPin, 1500); // On maintient la tête droite
+    // Mode suivi face
+    if (d > 20) roulerPrecis(1);
+    else if (d < 12) roulerPrecis(-1);
+    else roulerPrecis(0);
+  }
+}
 
-    if (d > 18) {
-      roulerPrecis(1);  // Avancer
-    } else if (d < 12) {
-      roulerPrecis(-1); // Reculer
-    } else {
-      roulerPrecis(0);  // Zone de confort (12cm à 18cm)
-    }
   }
 }
