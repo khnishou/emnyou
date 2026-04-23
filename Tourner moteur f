@@ -1,48 +1,44 @@
 void tournerMoteur(float d)
 {
+  // 1. SI AUCUNE DÉTECTION : Chercher
   if (d > 45 || d <= 2) 
   {
     roulerPrecis(0);
     chercherMain();
-    return;
+    return; // On sort pour ne pas exécuter la suite
   }
   
-  if (posTete > 1600 || posTete < 1400) 
+  // 2. SI DÉTECTION LATÉRALE (Le robot doit pivoter)
+  if (posTete > 1650 || posTete < 1350) 
   {
     roulerPrecis(0);
+    int angleCalculé = (posTete - 1500) * 90 / 500; 
+
+    // On exécute la rotation
+    tournerSurLuiPrecis(angleCalculé);
     
-    // ÉTAPE 1 : On bloque la valeur actuelle tout de suite
-    int lectureBrute = posTete; 
-    delay(100); // Petit temps mort pour stabilisation mécanique
-
-    // ÉTAPE 2 : On confirme que la main est toujours là
-    float d_conf = distanceCm();
-    if (d_conf > 0 && d_conf < 50) 
-    {
-      // ÉTAPE 3 : Calcul précis
-      // Si 2000 = Gauche et 1000 = Droite, alors (pos - 1500) est correct.
-      // Si c'est l'inverse, il faut mettre : (1500 - lectureBrute)
-      int angleAxe = (lectureBrute - 1500) * 90 / 500; 
-
-      Serial.print("Position Tete: "); Serial.print(lectureBrute);
-      Serial.print(" -> Angle calcule: "); Serial.println(angleAxe);
-
-      tournerSurLuiPrecis(angleAxe);
-      
-      // ÉTAPE 4 : Reset immédiat pour éviter que la boucle loop() ne réutilise l'ancienne valeur
-      posTete = 1500; 
-      pulseServo(headPin, 1500);
-      delay(300);
-    }
+    // --- FORCE LE REDRESSEMENT ICI ---
+    posTete = 1500; 
+    pulseServo(headPin, 1500); 
+    delay(200); // Temps pour que le servo physique revienne au centre
   }
+  // 3. MODE SUIVI DE FACE (Redressement automatique)
   else 
   {
-    // Mode suivi face
-    if (d > 20) roulerPrecis(1);
-    else if (d < 12) roulerPrecis(-1);
-    else roulerPrecis(0);
+    // On force la tête au centre dès qu'on est dans la zone "face"
+    posTete = 1500;
+    pulseServo(headPin, 1500);
+
+    if (d > 20) {
+      roulerPrecis(1);
+    } else if (d < 12) {
+      roulerPrecis(-1);
+    } else {
+      roulerPrecis(0);
+    }
   }
 }
+
 
   }
 }
