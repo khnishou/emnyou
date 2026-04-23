@@ -43,7 +43,11 @@ void loop()
   rouler_isNSpace(1);
   if (count_r >= target || count_l >= target)
   {
-    roulerPrecis(-10);
+    tournerSurRouePrecis(-45,right11);
+    roulerPrecis(-15);
+    tournerSurRouePrecis(-45,left10);
+    
+    delay(5000000000) ;
   }
   delay(1000);
 
@@ -133,3 +137,21 @@ float distanceCm()
 
   return microsecondsToCentimeters(duration); 
 } 
+
+void tournerSurRouePrecis(int angle, int roue) {
+  count_r = 0;
+  count_l = 0;
+
+  int cible = (abs(angle) * 66.48) / (360 * distParImpulsion);
+
+  while ((roue == left10 && count_r < cible) ||
+         (roue == right11 && count_l < cible)) {
+
+    if (roue == left10)
+      pulseServo(right11, (angle > 0) ? 1300 : 1700);
+    else if (roue == right11)
+      pulseServo(left10, (angle > 0) ? 1700 : 1300);
+
+    delay(20);
+  }
+}
