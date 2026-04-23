@@ -10,6 +10,7 @@ volatile int count_r = 0;
 volatile int count_l = 0;
 
 const float distParImpulsion = 0.325;
+int target = 40 / distParImpulsion;
 
 void roue_r()
 {
@@ -37,7 +38,20 @@ void setup()
 
 void loop()
 {
-  tournerMoteur(distanceCm());
+  rouler_isSpace(1);
+  delay(1000);
+  rouler_isNSpace(1);
+  if (count_r >= target || count_l >= target)
+  {
+    roulerPrecis(-10);
+  }
+  delay(1000);
+
+}
+
+int isSpace()
+{
+  return (distanceCm() > 15);
 }
 
 void pulseServo(int servoPin, int pulseLg)
@@ -47,40 +61,58 @@ void pulseServo(int servoPin, int pulseLg)
   digitalWrite(servoPin, LOW);
 }
 
-void roulerPrecis(float direc)
+void rouler_isNSpace(int direc)
 {
-  if (!direc)
+  count_r = 0;
+  count_l = 0;
+  
+  while (count_r < target && count_l < target)
   {
-    pulseServo(left10, 1500);
-    pulseServo(right11, 1500);
+    if (!isSpace())
+      break ;
+    pulseServo(left10, (direc > 0) ? 1700 : 1300);
+    pulseServo(right11, (direc > 0) ? 1300 : 1700);
+
     delay(20);
-    return ;
   }
-  pulseServo(left10, (direc > 0) ? 1700 : 1300);
-  pulseServo(right11, (direc > 0) ? 1300 : 1700);
-  delay(20);
+  Serial.println(count_r);
+  Serial.println(count_l);
+
 }
 
-// void tournerSurLuiPrecis(int angle)
-// {
-//   count_r = 0;
-//   count_l = 0;
+void rouler_isSpace(int direc)
+{
+  count_r = 0;
+  count_l = 0;
+  while (1)
+  {
+    if (isSpace())
+      break ;
+    pulseServo(left10, (direc > 0) ? 1700 : 1300);
+    pulseServo(right11, (direc > 0) ? 1300 : 1700);
 
-//   int cible = (abs(angle) * 33.24) / (360 * distParImpulsion);
+    delay(20);
+  }
+}
 
-//   int varL = (angle > 0) ? 1700 : 1300;
-//   int varR = (angle > 0) ? 1700 : 1300;
+void roulerPrecis(float distanceCm)
+{
 
-//   while (count_l < cible && count_r < cible) {
-//     if (count_l < cible)
-//       pulseServo(left10, varL);
+  count_r = 0;
+  count_l = 0;
 
-//     if (count_r < cible)
-//       pulseServo(right11, varR);
+  int cible = abs(distanceCm) / distParImpulsion;
 
-//     delay(20);
-//   }
-// }
+  while (count_l < cible && count_r < cible)
+  {
+    if (count_l < cible)
+      pulseServo(left10, (distanceCm > 0) ? 1700 : 1300);
+    if (count_r < cible)
+      pulseServo(right11, (distanceCm > 0) ? 1300 : 1700);
+
+    delay(20);
+  }
+}
 
 float microsecondsToCentimeters(float microseconds) {
   return microseconds / 58;
@@ -101,13 +133,3 @@ float distanceCm()
 
   return microsecondsToCentimeters(duration); 
 } 
-
-void tournerMoteur(float d)
-{
-  if (d > 17)
-    roulerPrecis(1);
-  else if (d < 13)
-    roulerPrecis(-1);
-  else
-    roulerPrecis(0);
-}
