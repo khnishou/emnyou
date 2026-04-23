@@ -1,0 +1,156 @@
+#define GAUCHE     10
+#define DROIT      11
+#define TETE       12
+#define PING       7
+
+#define STOP_CM     15
+#define SUIVI_CM    20
+#define PERDU_CM    40   // au-delÃ  â†’ main considÃ©rÃ©e perdue
+
+#define TETE_CENTRE 1500
+#define TETE_GAUCHE 1900
+#define TETE_DROITE 1100
+
+// ---- Ã‰tats du robot ----
+enum Etat { CHERCHE, SUIT, STOPPE, RECULE };
+Etat etat = CHERCHE;
+
+float lire_distance() {
+  pinMode(PING, OUTPUT);
+  digitalWrite(PING, LOW);
+  delayMicroseconds(2);
+  digitalWrite(PING, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(PING, LOW);
+
+  pinMode(PING, INPUT);
+  long duree = pulseIn(PING, HIGH);
+  return duree / 58.0;
+}
+
+void pulse(int pin, int us) {
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(us);
+  digitalWrite(pin, LOW);
+}
+
+void avancer() {
+  pulse(GAUCHE, 1700); delay(10);
+  pulse(DROIT,  1300); delay(10);
+}
+
+void reculer() {
+  pulse(GAUCHE, 1300); delay(10);
+  pulse(DROIT,  1700); delay(10);
+}
+
+void arreter() {
+  pulse(GAUCHE, 1500); delay(10);
+  pulse(DROIT,  1500); delay(10);
+}
+
+void tourner_tete(int us) {
+  for (int i = 0; i < 30; i++) {
+    pulse(TETE, us);
+    delay(20);
+  }
+}
+
+// Scan gauche/droite â†’ retourne la plus petite distance trouvÃ©e
+float scanner_autour() {
+  float d_gauche, d_droite;
+
+  tourner_tete(TETE_GAUCHE);
+  d_gauche = lire_distance();
+  Serial.print("Scan gauche: "); Serial.println(d_gauche);
+
+  tourner_tete(TETE_DROITE);
+  d_droite = lire_distance();
+  Serial.print("Scan droite: "); Serial.println(d_droite);
+
+  tourner_tete(TETE_CENTRE);
+
+  return min(d_gauche, d_droite);
+}
+
+void setup() {
+  pinMode(GAUCHE, OUTPUT);
+  pinMode(DROIT,  OUTPUT);
+  pinMode(TETE,   OUTPUT);
+  Serial.begin(9600);
+  tourner_tete(TETE_CENTRE);
+  etat = CHERCHE;
+}
+
+void loop() {
+  float distance;
+
+  switch (etat) {
+
+    case CHERCHE:
+      // Scan jusqu'Ã  trouver une main
+      arreter();
+      distance = scanner_autour();
+      Serial.print("[CHERCHE] distance: "); Serial.println(distance);
+
+      if (distance < PERDU_CM) {
+        // Main trouvÃ©e â†’ on passe en mode suivi
+        etat = SUIT;
+      }
+      // Sinon on reste en CHERCHE et on rescanne
+      break;
+
+    case SUIT:
+      // Main trouvÃ©e, on avance vers elle
+      distance = lire_distance();
+      Serial.print("[SUIT] distance: "); Serial.println(distance);
+
+      if (distance < STOP_CM) {
+        etat = STOPPE;
+      }
+      else if (distance >= PERDU_CM) {
+        // Main perdue â†’ retour en recherche
+        etat = CHERCHE;
+      }
+      else {
+        avancer();
+      }
+      break;
+
+    case STOPPE:
+      // Trop proche â†’ arrÃªt
+      distance = lire_distance();
+      Serial.print("[STOPPE] distance: "); Serial.println(distance);
+
+      arreter();
+
+      if (distance < STOP_CM) {
+        etat = RECULE;
+      }
+      else if (distance >= PERDU_CM) {
+        etat = CHERCHE;
+      }
+      else {
+        // Entre STOP et PERDU â†’ on reste arrÃªtÃ©, on attend
+        etat = SUIT;
+      }
+      break;
+
+    case RECULE:
+      // Main trop proche â†’ on recule
+      distance = lire_distance();
+      Serial.print("[RECULE] distance: "); Serial.println(distance);
+
+      if (distance >= STOP_CM) {
+        // On a assez reculÃ©
+        etat = SUIT;
+      }
+      else if (distance >= PERDU_CM) {
+        etat = CHERCHE;
+      }
+      else {
+        reculer();
+      }
+      break;
+  }
+}
