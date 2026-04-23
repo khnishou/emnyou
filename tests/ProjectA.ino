@@ -27,7 +27,11 @@ void setup()
   pinMode(pingPin, OUTPUT);
   pinMode(left10, OUTPUT);
   pinMode(right11, OUTPUT);
-  pulseServo(headPin,1000);
+  for(int i = 0;i<30;i++)
+  {
+    pulseServo(headPin,650);
+    delay(20);
+  }
   Serial.begin(9600);
 
   attachInterrupt(digitalPinToInterrupt(2), roue_r, CHANGE);
