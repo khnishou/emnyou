@@ -1,0 +1,151 @@
+#define MOTEURG 10
+#define MOTEURD 11
+#define ANTENNED 6
+#define ANTENNEG 5
+
+volatile int CPT_D = 0;
+volatile int CPT_G = 0;
+volatile int cpt = 0;
+
+void pulseServo(int pin, int pulseLg);
+void avancer(int cm, int pinmg, int pinmd);
+void tournerD(int degre, int pinmg, int pinmd);
+void tournerG(int degre, int pinmg, int pinmd);
+
+void augmentcptG()
+{
+  CPT_G++;
+}
+void augmentcptD()
+{
+  CPT_D++;
+}
+
+void setup() 
+{
+  pinMode(MOTEURG, OUTPUT);
+  pinMode(MOTEURD, OUTPUT);
+  pinMode(3, INPUT);
+  pinMode(2, INPUT);
+  pinMode(ANTENNEG, INPUT);
+  pinMode(ANTENNED, INPUT);
+  attachInterrupt(digitalPinToInterrupt(3), augmentcptG, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(2), augmentcptD, CHANGE); 
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  int capteurG, capteurD;
+  capteurD = digitalRead(ANTENNED);
+  capteurG = digitalRead(ANTENNEG);
+
+  Serial.print("GAUCHE :");
+  Serial.print(CPT_G);
+  Serial.print(" DROITE :");
+  Serial.print(CPT_D);
+  Serial.print("    ");
+
+  if(capteurG == 0)
+  {
+    if(capteurD == 0)
+    {
+      Serial.print("Obstacle devant");
+      avancer(-10, MOTEURG, MOTEURD);
+      tournerD(100, MOTEURG, MOTEURD);
+      cpt = 0;
+    }
+    else
+    {
+      Serial.print("Ostacle Ã  gauche");
+      avancer(-20, MOTEURG, MOTEURD);
+      tournerG(50, MOTEURG, MOTEURD);
+      cpt = 0;
+    }
+
+  }
+  else
+  {
+    if(capteurD == 0)
+    {
+      Serial.print("Obstacle Ã  droite");
+      avancer(-20, MOTEURG, MOTEURD);
+      tournerD(30, MOTEURG, MOTEURD);
+      cpt = 0;
+    }
+    else
+    {
+      Serial.print("Aucun obstacle");
+      avancer(5, MOTEURG, MOTEURD);
+      cpt += 1;
+      if(cpt > 17)
+      {
+        avancer(-25, MOTEURG, MOTEURD);
+        tournerD(120, MOTEURG, MOTEURD);
+        cpt = 0;
+      }
+    }
+  }
+
+  Serial.println();
+  delay(50);
+}
+
+void pulseServo(int pin, int pulseLg)
+{
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(pulseLg);
+  digitalWrite(pin, LOW);
+  delay(20);
+}
+
+void avancer(int cm, int pinmg, int pinmd)
+{
+  int i = (cm * 3.08);
+  CPT_D = 0;
+  if(cm > 0)
+  {
+    while(CPT_D < i)
+    {
+      pulseServo(pinmg, 1700);
+      pulseServo(pinmd, 1300);
+    }
+  }
+  else
+  {
+    i = -i;
+    while(CPT_D < i)
+    {
+      pulseServo(pinmg, 1300);
+      pulseServo(pinmd, 1700);
+    }
+  }
+}
+
+void tournerD(int degre, int pinmg, int pinmd)
+{
+  int nbpulse;
+  nbpulse = (degre / 1.76);
+  CPT_D= 0;
+  while(CPT_D < nbpulse)
+  {
+    pulseServo(pinmg, 1300);
+    pulseServo(pinmd, 1300);
+  }
+  pulseServo(pinmg, 1500);
+  pulseServo(pinmd, 1500);
+}
+
+void tournerG(int degre, int pinmg, int pinmd)
+{
+  int nbpulse;
+  nbpulse = (degre / 1.76);
+  CPT_G = 0;
+  while(CPT_G < nbpulse)
+  {
+    pulseServo(pinmg, 1700);
+    pulseServo(pinmd, 1700);
+  }
+  pulseServo(pinmg, 1500);
+  pulseServo(pinmd, 1500);
+}
