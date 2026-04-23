@@ -102,7 +102,8 @@ float distanceCm()
   return microsecondsToCentimeters(duration); 
 } 
 
-void chercherMain(){
+void chercherMain()
+{
   posTete = posTete + sensTete;
 
   if(posTete >= 2000 || posTete <= 1000)
@@ -110,35 +111,73 @@ void chercherMain(){
   pulseServo(headPin, posTete);
 }
 
+// void dogSim(float d)
+// {
+//   if (d > 35 || d == 0) 
+//   {
+//     roulerPrecis(0);
+//     chercherMain();
+//   }
+//   else
+//   {
+//     if (posTete > 1600 || posTete < 1400)
+//     {
+//       int angle = (posTete - 1500) * 90 / 500;
+//       tournerSurLuiPrecis(angle);
+//       posTete = 1500;
+    
+//       int i = 0;
+//       while (i < 15)
+//       {
+//         roulerPrecis(0);
+//         pulseServo(headPin, posTete);
+//         delay(20);
+//         i++;
+//       }
+//     }
+//     else
+//     {
+//       posTete = 1500;
+//       pulseServo(headPin, 1500);
+//       follow(d);
+//     }
+//   }
+// }
+
+int handFound(float d)
+{
+  return (d <= 35 && d > 0);
+}
+
+int centeredHead()
+{
+  return (!(posTete > 1600 || posTete < 1400));
+}
+
 void dogSim(float d)
 {
-  if (d > 35 || d == 0) 
+  int angle;
+  if (!handFound(d))
   {
     roulerPrecis(0);
     chercherMain();
   }
   else
   {
-    if (posTete > 1600 || posTete < 1400)
-    {
-      int angle = (posTete - 1500) * 90 / 500;
-      tournerSurLuiPrecis(angle);
-      posTete = 1500;
-    
-      int i = 0;
-      while (i < 15)
-      {
-        roulerPrecis(0);
-        pulseServo(headPin, posTete);
-        delay(20);
-        i++;
-      }
-    }
-    else
+    if (centeredHead())
     {
       posTete = 1500;
       pulseServo(headPin, 1500);
       follow(d);
+    }
+    else
+    {
+      angle = (posTete - 1500) * 90 / 500;
+      Serial.println(posTete);
+      Serial.println(angle);
+      delay(2000);
+      tournerSurLuiPrecis(angle);
+      posTete = 1500;
     }
   }
 }
