@@ -4,39 +4,48 @@ int pingPin = 7;
 int headPin = 12;
 
 int posTete = 1500;
-int sensTete = 20; // Vitesse de balayage
+int sensTete = 15; 
 
 volatile int count_r = 0;
 volatile int count_l = 0;
+
 const float distParImpulsion = 0.325;
 
-// ==========================================
-//  FONCTIONS D'INTERRUPTION
-// ==========================================
-void roue_r() { count_r++; }
-void roue_l() { count_l++; }
+void roue_r()
+{
+  count_r++;
+}
 
-// ==========================================
-// SETUP
-// ==========================================
+void roue_l()
+{
+  count_l++;
+}
+
 void setup()
 {
   pinMode(pingPin, OUTPUT);
   pinMode(left10, OUTPUT);
   pinMode(right11, OUTPUT);
   pinMode(headPin, OUTPUT);
-
   Serial.begin(9600);
 
   attachInterrupt(digitalPinToInterrupt(2), roue_r, CHANGE);
   attachInterrupt(digitalPinToInterrupt(3), roue_l, CHANGE);
-  
-  pulseServo(headPin, 1500);
+
+  randomSeed(analogRead(A0));
+
+  // Centrage de la tête au démarrage
+  for (int i = 0; i < 15; i++) {
+    pulseServo(headPin, 1500);
+    delay(20);
+  }
 }
 
-// ==========================================
-// FONCTIONS DE MOUVEMENT
-// ==========================================
+void loop()
+{
+  dogSim(distanceCm());
+}
+
 void pulseServo(int servoPin, int pulseLg)
 {
   digitalWrite(servoPin, HIGH);
@@ -46,14 +55,13 @@ void pulseServo(int servoPin, int pulseLg)
 
 void roulerPrecis(float direc)
 {
-  if (direc == 0)
+  if (!direc)
   {
-    pulseServo(left10, 1500); 
+    pulseServo(left10, 1500);
     pulseServo(right11, 1500);
     delay(20);
     return ;
   }
-  
   pulseServo(left10, (direc > 0) ? 1700 : 1300);
   pulseServo(right11, (direc > 0) ? 1300 : 1700);
   delay(20);
@@ -66,20 +74,25 @@ void tournerSurLuiPrecis(int angle)
 
   int cible = (abs(angle) * 33.24) / (360 * distParImpulsion);
 
-  // Inversion pour que le robot pivote sur place
+  // Inversion pour le pivot
   int varL = (angle > 0) ? 1700 : 1300;
-  int varR = (angle > 0) ? 1300 : 1700; 
+  int varR = (angle > 0) ? 1300 : 1700;
 
   while (count_l < cible && count_r < cible) {
-    if (count_l < cible) pulseServo(left10, varL);
-    if (count_r < cible) pulseServo(right11, varR);
+    if (count_l < cible)
+      pulseServo(left10, varL);
+
+    if (count_r < cible)
+      pulseServo(right11, varR);
+
     delay(20);
   }
 }
 
-// ==========================================
-//  FONCTION CAPTEUR ET TÊTE
-// ==========================================
+float microsecondsToCentimeters(float microseconds) {
+  return microseconds / 58;
+}
+
 float distanceCm()
 {
   pinMode(pingPin, OUTPUT);
@@ -91,60 +104,60 @@ float distanceCm()
   
   pinMode(pingPin, INPUT);
   
-  // Timeout à 20000 au lieu de 5000 pour être sûr de capter de plus loin
+  // Timeout de 20ms pour éviter les blocages
   float duration = pulseIn(pingPin, HIGH, 20000);
 
-  if(duration == 0) return 100; // Si rien n'est vu, on simule que c'est très loin
-  return duration / 58.0; 
+  return microsecondsToCentimeters(duration); 
 } 
 
 void chercherMain(){
   posTete = posTete + sensTete;
 
-  if(posTete >= 2000 || posTete <= 1000){
+  if(posTete >= 2000 || posTete <= 1000)
     sensTete = -sensTete;
-  }
   pulseServo(headPin, posTete);
 }
 
-// ==========================================
-// LE CERVEAU (BOUCLE PRINCIPALE)
-// ==========================================
-void loop()
+void dogSim(float d)
 {
-  float d = distanceCm();
-
-  // 1. SI ON NE VOIT RIEN : On s'arrête et on tourne la tête
-  if (d > 40 || d <= 2) 
+  if (d > 35 || d == 0) 
   {
     roulerPrecis(0);
     chercherMain();
   }
-  // 2. SI LA MAIN EST SUR LE CÔTÉ : On utilise lA fonction precise pour s'aligner
-  else if (posTete > 1650 || posTete < 1350) 
+  else
   {
-    int angle = (posTete - 1500) * 90 / 500; 
+    if (posTete > 1600 || posTete < 1400)
+    {
+      int angle = (posTete - 1500) * 90 / 500;
+      tournerSurLuiPrecis(angle);
+      posTete = 1500;
     
-    tournerSurLuiPrecis(angle);
-    
-    // On remet la tête droite après avoir tourné le corps
-    posTete = 1500;
-    pulseServo(headPin, posTete);
-    delay(100); // Laisse le capteur se stabiliser
-  }
-  // 3. SI LA MAIN EST BIEN EN FACE : On ajuste la distance avec lA fonction
-  else 
-  {
-    posTete = 1500;
-    pulseServo(headPin, 1500);
-
-    if (d > 20) {
-      roulerPrecis(1);  // Avance
-    } else if (d < 15) {
-      roulerPrecis(-1); // Recule
-    } else {
-      roulerPrecis(0);  // Stop
+      int i = 0;
+      // Boucle de stabilisation
+      while (i < 15)
+      {
+        roulerPrecis(0);
+        pulseServo(headPin, posTete);
+        delay(20);
+        i++;
+      }
+    }
+    else
+    {
+      posTete = 1500;
+      pulseServo(headPin, 1500);
+      follow(d);
     }
   }
 }
 
+void follow(float d)
+{
+  if (d > 17 && d < 35)
+    roulerPrecis(1);  
+  else if (d < 13)
+    roulerPrecis(-1); 
+  else
+    roulerPrecis(0);  
+}
