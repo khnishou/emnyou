@@ -2,6 +2,8 @@
 #define button 2
 volatile int buttonState;
 
+#define buzzer 6
+
 #include <Servo.h>
 Servo myservo;
 #define SERVO_PIN 9
@@ -23,6 +25,7 @@ void setup()
   Serial.begin(9600);
   pinMode(button, INPUT);
   pinMode(LED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
   myservo.attach(SERVO_PIN);
   lcd.init();
 }
