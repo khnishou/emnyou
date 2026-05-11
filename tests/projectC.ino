@@ -39,12 +39,12 @@ void loop ()
     }
     else
     {
-        dogshit_code();
+       main_code();
     }
     delay(100);
 }
 
-void dogshit_code()
+void main_code()
 {
     int chk;
     volatile int curr_lux = 0;
