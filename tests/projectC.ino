@@ -18,7 +18,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 #define PHOTOS  A0
 int max_lux = 0;
-int angle_lux = 0;
+int angle= 0;
 volatile int value = 0;
 void setup()
 {
@@ -60,9 +60,9 @@ void main_code()
             {
                 max_lux = curr_lux;
                 angle = i;
-                digitalWrite(led, HIGH);
+                digitalWrite(LED, HIGH);
                 good_song();
-                digitalWrite(led, LOW);
+                digitalWrite(LED, LOW);
             }
             else
                 bad_song();
@@ -404,73 +404,73 @@ void good_song()
 
 void bad_song()
 {
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 392); delay(560);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   noTone(buzzer); delay(60);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 392); delay(560);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   noTone(buzzer); delay(60);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 392); delay(560);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   noTone(buzzer); delay(60);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 311); delay(440);
   
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   tone(buzzer, 466); delay(190);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 392); delay(625);
   
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   tone(buzzer, 311); delay(440);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 466); delay(190);
   
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   tone(buzzer, 392); delay(1250);
   
   // Deuxième partie
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 587); delay(560);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   noTone(buzzer); delay(60);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 587); delay(560);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   noTone(buzzer); delay(60);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 587); delay(560);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   noTone(buzzer); delay(60);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 622); delay(440);
   
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   tone(buzzer, 466); delay(190);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 370); delay(625);
   
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   tone(buzzer, 311); delay(440);
   
-  digitalWrite(led, HIGH);
+  digitalWrite(LED, HIGH);
   tone(buzzer, 466); delay(190);
   
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
   tone(buzzer, 392); delay(1250);
   
   noTone(buzzer);
-  digitalWrite(led, LOW);
+  digitalWrite(LED, LOW);
 }
