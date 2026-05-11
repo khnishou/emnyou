@@ -86,7 +86,120 @@ void dogshit_code()
 
 super_complex_code()
 {
-
+   for (int i = 0; i < 2; i++) 
+   {
+      tone(buzzer, 440); 
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494); 
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 587);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494); 
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+  
+      tone(buzzer, 740); 
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 740);  
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 659);  
+      delay(800);
+      noTone(buzzer);
+      delay(100);
+  
+      tone(buzzer, 440);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 587);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+  
+      tone(buzzer, 659); 
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 659);  
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 587);  
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 554);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494);  
+      delay(400);
+      noTone(buzzer);
+      delay(100);
+  
+      tone(buzzer, 440);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 587);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+  
+      tone(buzzer, 587);  
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 554);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 494);  
+      delay(200);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 440);  
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+  
+      tone(buzzer, 659);  
+      delay(400);
+      noTone(buzzer);
+      delay(50);
+      tone(buzzer, 587);  
+      delay(800);
+      noTone(buzzer);
+      
+      delay(500);
+    }
 }
 
 good_song()
