@@ -60,7 +60,9 @@ void main_code()
             {
                 max_lux = curr_lux;
                 angle = i;
+                digitalWrite(led, HIGH);
                 good_song();
+                digitalWrite(led, LOW);
             }
             else
                 bad_song();
@@ -402,53 +404,73 @@ void good_song()
 
 void bad_song()
 {
-  tone(buzzer, 392);
-  delay(560);
+  digitalWrite(led, HIGH);
+  tone(buzzer, 392); delay(560);
+  digitalWrite(led, LOW);
+  noTone(buzzer); delay(60);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 392); delay(560);
+  digitalWrite(led, LOW);
+  noTone(buzzer); delay(60);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 392); delay(560);
+  digitalWrite(led, LOW);
+  noTone(buzzer); delay(60);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 311); delay(440);
+  
+  digitalWrite(led, LOW);
+  tone(buzzer, 466); delay(190);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 392); delay(625);
+  
+  digitalWrite(led, LOW);
+  tone(buzzer, 311); delay(440);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 466); delay(190);
+  
+  digitalWrite(led, LOW);
+  tone(buzzer, 392); delay(1250);
+  
+  // Deuxième partie
+  digitalWrite(led, HIGH);
+  tone(buzzer, 587); delay(560);
+  digitalWrite(led, LOW);
+  noTone(buzzer); delay(60);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 587); delay(560);
+  digitalWrite(led, LOW);
+  noTone(buzzer); delay(60);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 587); delay(560);
+  digitalWrite(led, LOW);
+  noTone(buzzer); delay(60);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 622); delay(440);
+  
+  digitalWrite(led, LOW);
+  tone(buzzer, 466); delay(190);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 370); delay(625);
+  
+  digitalWrite(led, LOW);
+  tone(buzzer, 311); delay(440);
+  
+  digitalWrite(led, HIGH);
+  tone(buzzer, 466); delay(190);
+  
+  digitalWrite(led, LOW);
+  tone(buzzer, 392); delay(1250);
+  
   noTone(buzzer);
-  delay(60);
-  tone(buzzer, 392);  
-  delay(560);
-  noTone(buzzer);
-  delay(60);
-  tone(buzzer, 392);  
-  delay(560);
-  noTone(buzzer);
-  delay(60);
-  tone(buzzer, 311);
-  delay(440);
-  tone(buzzer, 466);
-  delay(190);
-  tone(buzzer, 392);
-  delay(625);
-  tone(buzzer, 311);  
-  delay(440);
-  tone(buzzer, 466);  
-  delay(190);
-  tone(buzzer, 392);  
-  delay(1250);
-  tone(buzzer, 587);
-  delay(560);
-  noTone(buzzer);
-  delay(60);
-  tone(buzzer, 587);  
-  delay(560);
-  noTone(buzzer);
-  delay(60);
-  tone(buzzer, 587);  
-  delay(560);
-  noTone(buzzer);
-  delay(60);
-  tone(buzzer, 622);
-  delay(440);
-  tone(buzzer, 466);
-  delay(190);
-  tone(buzzer, 370);
-  delay(625);
-  tone(buzzer, 311);
-  delay(440);
-  tone(buzzer, 466);
-  delay(190);
-  tone(buzzer, 392);
-  delay(1250);
-  noTone(buzzer);
+  digitalWrite(led, LOW);
 }
