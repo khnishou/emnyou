@@ -87,7 +87,7 @@ void dogshit_code()
     delay(5000);
 }
 
-super_complex_code()
+void super_complex_code()
 {
    for (int i = 0; i < 2; i++) 
    {
@@ -205,10 +205,200 @@ super_complex_code()
     }
 }
 
-good_song()
+void good_song()
 {
+ tone(buzzer, 659);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
 
+  tone(buzzer, 494);  
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 587);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 494);
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 440); 
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 440);  
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 659); 
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 587); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523);
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 494); 
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 494);  
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 587);
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 659);
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 440);
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 440);  
+  delay(600);
+  noTone(buzzer);
+  delay(100);
+
+
+  tone(buzzer, 587);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 698);  
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 880);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 784);
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 698);
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 659); 
+  delay(600);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 659); 
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 587);
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523); 
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 494);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 494);  
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523);  
+  delay(200);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 587);
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 659);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 523);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 440);  
+  delay(450);
+  noTone(buzzer);
+  delay(50);
+
+  tone(buzzer, 440);  
+  delay(600);
+  noTone(buzzer);
 }
+
+
 
 void bad_song()
 {
